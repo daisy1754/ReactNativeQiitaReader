@@ -6,6 +6,7 @@ import {
   Platform,
   StyleSheet,
   Text,
+  TouchableNativeFeedback,
   View
 } from 'react-native';
 import Qiita from 'qiita-js';
@@ -37,17 +38,20 @@ class ArticleList extends Component {
 
   _renderItem = (article) => {
     return (
-      <View style={styles.listItem}>
-        <Image
-          style={styles.icon}
-          source={{uri: article.item.user.profile_image_url}}
-        />
-        <View style={{flex: 1}}>
-          <Text style={styles.title}>
-             {article.item.title}
-          </Text>
+      <TouchableNativeFeedback
+          onPress={() => this.props.navigation.navigate('Details', {article: article})}>
+        <View style={styles.listItem}>
+          <Image
+            style={styles.icon}
+            source={{uri: article.item.user.profile_image_url}}
+          />
+          <View style={{flex: 1}}>
+            <Text style={styles.title}>
+               {article.item.title}
+            </Text>
+          </View>
         </View>
-      </View>);
+      </TouchableNativeFeedback>);
   }
 
   render() {
