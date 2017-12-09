@@ -1,37 +1,65 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
+  FlatList,
+  Image,
   Platform,
   StyleSheet,
   Text,
   View
 } from 'react-native';
+import Qiita from 'qiita-js';
+import {QIITA_API_TOKEN} from './Secrets';
+Qiita.setEndpoint("https://qiita.com");
+Qiita.setToken(QIITA_API_TOKEN);
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+if (!QIITA_API_TOKEN) {
+  throw new Error("QIITA_API_TOKEN must be set in Secrets.js");
+}
 
-export default class App extends Component<{}> {
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this._prefetchArticles();
+    this.state = {isLoading: true};
+  }
+
+  _prefetchArticles = () => {
+    Qiita.Resources.Item.list_items().then((items) => {
+      this.setState({isLoading: false, articles: items});
+    });
+  };
+
+  _keyExtractor = (article) => {
+    return article.id;
+  }
+
+  _renderItem = (article) => {
+    return (
+      <View style={styles.listItem}>
+        <Image
+          style={styles.icon}
+          source={{uri: article.item.user.profile_image_url}}
+        />
+        <View style={{flex: 1}}>
+          <Text style={styles.title}>
+             {article.item.title}
+          </Text>
+        </View>
+      </View>);
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+        {this.state.isLoading && <ActivityIndicator size={'large'} />}
+        {!this.state.isLoading && <FlatList
+          style={{width: '100%'}}
+          data={this.state.articles}
+          keyExtractor={this._keyExtractor}
+          renderItem={this._renderItem}
+        />}
       </View>
     );
   }
@@ -42,16 +70,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  listItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    padding: 12,
+    borderBottomColor: '#dcdcdc',
+    borderBottomWidth: 1
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  icon: {
+    width: 48,
+    height: 48
   },
+  title: {
+    padding: 8,
+    flexWrap: 'wrap'
+  }
 });
