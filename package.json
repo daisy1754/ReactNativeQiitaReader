@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "generate_secrets_from_env": "rm Secrets.js; echo export const QIITA_API_TOKEN = \\\"$QIITA_API_TOKEN\\\" > Secrets.js"
   },
   "dependencies": {
     "qiita-js": "^0.4.3",
