@@ -15,3 +15,4 @@ android:
   - addon-google_apis-google-16
 script:
 - cd android && ./gradlew assembleRelease
+- npm run upload_to_appetize
