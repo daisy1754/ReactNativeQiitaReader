@@ -1,7 +1,6 @@
 #! /usr/bin/env node
 
 const fs = require('fs');
-const FormData = require('form-data');
 const request = require('request');
 
 const args = process.argv.slice(2);
